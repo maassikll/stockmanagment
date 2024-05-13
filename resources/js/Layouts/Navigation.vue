@@ -16,7 +16,7 @@
                         fill="white"/>
                 </svg>
 
-                <span class="mx-2 text-2xl font-semibold text-white">Dashboard</span>
+                <span class="mx-2 text-2xl font-semibold text-white">Elec Billal</span>
             </div>
         </div>
 
@@ -31,7 +31,7 @@
                               d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
                     </svg>
                 </template>
-                Dashboard
+                Statistiques
             </nav-link>
 
             <nav-link>
