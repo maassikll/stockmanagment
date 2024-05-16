@@ -29,7 +29,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Products/Create');
     }
 
     /**
@@ -37,7 +37,21 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+            'selling_price' => 'required|numeric',
+            'init_price' => 'required|numeric',
+            'description' => 'string',
+            
+        ]);
+    
+        $productData = $request->all();
+        $profit = $productData['selling_price'] - $productData['init_price'];
+        $productData['profit'] = $profit;
+        $product = new Product($productData);
+        $product->save();
+    
+        return redirect()->route('products.index');
     }
 
     /**
