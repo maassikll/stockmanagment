@@ -6,19 +6,21 @@
             Stock
         </template>
 
-        <!-- Search form -->
+        
         <form @submit.prevent="searchProducts" class="mb-4 flex ">
             <input
                 type="text"
                 v-model="form.search"
                 placeholder="Chercher un produit..."
                 class="w-full rounded-md border border-gray-300 p-2 m-1"
+                @input="searchProducts"
             />
-            <SearchButton @click="searchProducts" :class="{ 'opacity-25 ': form.processing }">Chercher</SearchButton>
+
         </form>
 
         <div class="flex justify-end">
             <LinkButton :href="route('products.create')" :active="route().current('products.create')">Ajouter produit</LinkButton>
+            
         </div>
 
 
@@ -41,6 +43,7 @@
                         <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
                             Bénefice
                         </th>
+                        <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,6 +63,15 @@
                         <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                             <p class="text-gray-900 whitespace-no-wrap">{{ product.profit }}</p>
                         </td>
+
+                        <td class="border-b border-gray-200 bg-white   px-0 py-2 text-xxs flex ">
+                            <LinkButton :href="route('products.show', { id: product.id })" :active="route().current('products.show')">Detailes</LinkButton>
+                            <LinkButton :href="route('products.edit', { id: product.id })" :active="route().current('products.edit')">Modifier</LinkButton>
+                            <LinkButton :href="route('products.destroy',product.id)"  method="DELETE">Supprimer</LinkButton>
+                   
+                        </td>
+
+
                     </tr>
                 </tbody>
             </table>
@@ -76,18 +88,20 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue'
 import { Head, useForm } from '@inertiajs/vue3';
 import LinkButton from '@/Components/LinkButton.vue'
-import SearchButton from '@/Components/SearchButton.vue';
+import debounce from 'lodash.debounce'
 
 const props = defineProps({
     products: Object,
     search: String
 });
 
+
 const form = useForm({
     search: props.search || '',
 });
 
-const searchProducts = () => {
+const searchProducts = debounce(() => {
     form.get(route('products.index'), { preserveState: true, replace: true });
-};
+}, 300);
+
 </script>

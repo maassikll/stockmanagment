@@ -17,12 +17,26 @@ class ProductController extends Controller
     
     $products = Product::query()
         ->when($search, function ($query, $search) {
-            return $query->where('name', 'like', "%{$search}%");
+            return $query->where('name', 'like', "%{$search}%")
+            ->orWhere('description', 'like', "%{$search}%")
+            ->orWhere('init_price', 'like', "%{$search}%")
+            ->orWhere('qte', 'like', "%{$search}%")
+            ->orWhere('selling_price','like',"%{$search}%");
         })
         ->paginate(10);
 
     return inertia::render('Products/Index', ['products' => $products, 'search' => $search]);
+
+
+    
     }
+
+    public function restore($id)
+    {
+        Product::withTrashed()->find($id)->restore();
+  
+        return redirect()->route('products.index');
+    }  
 
     /**
      * Show the form for creating a new resource.
@@ -57,32 +71,51 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        //
+        $product = Product::find($id);
+        return Inertia::render('Products/Show', compact('product'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit($id)
     {
-        //
+        $product = Product::find($id);
+        return Inertia::render('Products/Edit',compact('product'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        //
+                
+        $request->validate([
+            'name' => 'string',
+            'selling_price' => 'numeric',
+            'init_price' => 'numeric',
+            'description' => 'string',
+        ]);
+
+        $productData = $request->all();
+        $profit = $productData['selling_price'] - $productData['init_price'];
+        $productData['profit'] = $profit;
+        $product = Product::find($id);
+        $product->update($productData);
+        return redirect()->route('products.index')->with('success', 'Product updated successfully');
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        //
+        $product = Product::find($id);
+        $product->delete();
+        return redirect()->route('products.index');
     }
+
 }
