@@ -15,7 +15,7 @@ class ProductController extends Controller
     {
         $search = $request->input('search');
     
-    $products = Product::query()
+        $products = Product::query()
         ->when($search, function ($query, $search) {
             return $query->where('name', 'like', "%{$search}%")
             ->orWhere('description', 'like', "%{$search}%")
@@ -25,18 +25,16 @@ class ProductController extends Controller
         })
         ->paginate(10);
 
-    return inertia::render('Products/Index', ['products' => $products, 'search' => $search]);
+        return Inertia::render('Products/Index', ['products' => $products, 'search' => $search]);
 
+    }
 
+    public function restore(){
+        $restoreProducts = Product::onlyTrashed()->paginate(10); // Utilisation de paginate pour la pagination
+        return Inertia::render('Products/Restore', ['restoreProducts' => $restoreProducts]);
     
     }
 
-    public function restore($id)
-    {
-        Product::withTrashed()->find($id)->restore();
-  
-        return redirect()->route('products.index');
-    }  
 
     /**
      * Show the form for creating a new resource.
@@ -115,6 +113,13 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         $product->delete();
+        return redirect()->route('products.index');
+    }
+
+    public function productRestore(Request $request, $id){
+        $search = $request->input('search');
+        $restoreProduct = Product::onlyTrashed()->findOrFail($id);
+        $restoreProduct->restore();
         return redirect()->route('products.index');
     }
 

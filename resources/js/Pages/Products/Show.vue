@@ -20,7 +20,7 @@
   
         <div class="mt-8">
             <div>
-                <InputLabel for="name" value="Nom partener" />
+                <InputLabel for="name" value="Nom Produit" />
                 <span>{{ product.name }}</span>
             </div>
   
@@ -83,9 +83,12 @@ import {ref} from 'vue';
 import ModalButton from '@/Components/ModalButton.vue';
 import DeleteButton from '@/Components/DeleteButton.vue';
   
-  const props = defineProps({
-    product: Object
-  });
+const props = defineProps({
+    product: {
+        type: Object,
+        default: null
+    }
+});
 
 
 const showModal = ref(false);
@@ -96,14 +99,4 @@ const confirmDelete = (id) => {
   showModal.value = true;
 };
 
-const deleteProduct = () => {
-  showModal.value = false;
-  if (productIdToDelete.value) {
-    form.delete(route('products.destroy', { id: productIdToDelete.value }), {
-      onSuccess: () => {
-        productIdToDelete.value = null;
-      }
-    });
-  }
-};
   </script>
