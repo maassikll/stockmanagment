@@ -1,6 +1,10 @@
 <template>
     <head title="Show" />
     <AuthenticatedLayout>
+        <template #header>
+            <BackButton :href="route('products.index')" ></BackButton>
+        </template>
+
   
         <div class="mb-4 inline-flex w-full overflow-hidden rounded-lg bg-white shadow-md">
               <div class="flex w-12 items-center justify-center bg-blue-500">
@@ -78,11 +82,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import LinkButton from '@/Components/LinkButton.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import {ref} from 'vue';
 import ModalButton from '@/Components/ModalButton.vue';
 import DeleteButton from '@/Components/DeleteButton.vue';
-  
+import BackButton from '@/Components/BackButton.vue';
+
 const props = defineProps({
     product: {
         type: Object,

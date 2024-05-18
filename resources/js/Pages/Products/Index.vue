@@ -3,7 +3,7 @@
 
     <AuthenticatedLayout>
         <template #header>
-            Stock
+            Stock Magasin
         </template>
 
         

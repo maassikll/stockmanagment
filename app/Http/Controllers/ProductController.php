@@ -116,9 +116,9 @@ class ProductController extends Controller
         return redirect()->route('products.index');
     }
 
-    public function productRestore(Request $request, $id){
-        $search = $request->input('search');
-        $restoreProduct = Product::onlyTrashed()->findOrFail($id);
+    public function productRestore($id){
+        
+        $restoreProduct = Product::onlyTrashed()->orderBy('deleted_at','asc')->findOrFail($id);
         $restoreProduct->restore();
         return redirect()->route('products.index');
     }

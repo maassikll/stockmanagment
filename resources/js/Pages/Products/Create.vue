@@ -2,6 +2,12 @@
     <head title="Create" />
     <AuthenticatedLayout>
 
+        <template #header>
+            <BackButton :href="route('products.index')" ></BackButton>
+            Ajouter un produit au stock
+        </template>
+
+
         <form @submit.prevent="submit">
             <div>
                 <InputLabel for="name" value="Nom Produit" />
@@ -60,7 +66,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-
+import BackButton from '@/Components/BackButton.vue';
 
 
 

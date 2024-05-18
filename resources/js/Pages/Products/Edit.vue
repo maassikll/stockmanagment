@@ -1,6 +1,11 @@
 <template>
     <head title="Edit" />
     <AuthenticatedLayout>
+        <template #header>
+            <BackButton :href="route('products.index')" ></BackButton>
+            Modifier un produit du stock
+        </template>
+
 
         <form @submit.prevent="updateProduct">
             <div>
@@ -53,6 +58,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import BackButton from '@/Components/BackButton.vue';
 
 
 const props = defineProps({
