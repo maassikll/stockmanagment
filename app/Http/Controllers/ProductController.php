@@ -25,13 +25,18 @@ class ProductController extends Controller
         })
         ->paginate(10);
 
-        return Inertia::render('Products/Index', ['products' => $products, 'search' => $search]);
+        return Inertia::render('Products/Index', [
+            'products' => $products, 
+            'search' => $search
+        ]);
 
     }
 
     public function restore(){
         $restoreProducts = Product::onlyTrashed()->paginate(10); // Utilisation de paginate pour la pagination
-        return Inertia::render('Products/Restore', ['restoreProducts' => $restoreProducts]);
+        return Inertia::render('Products/Restore', [
+            'restoreProducts' => $restoreProducts
+        ]);
     
     }
 

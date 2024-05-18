@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 
@@ -43,7 +44,19 @@ Route::middleware('auth')->group(function () {
     Route::get('products/{id}', [ProductController::class, 'show'])->name('products.show');
     Route::get('products/{id}/edit',[ProductController::class,'edit'])->name('products.edit');
     Route::put('products/{id}',[ProductController::class,'update'])->name('products.update');
-    Route::delete('products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');                                    
+    Route::delete('products/{id}', [ProductController::class, 'destroy'])->name('products.destroy'); 
+    
+    
+    Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
+    Route::get('clients/restore', [ClientController::class, 'restore'])->name('clients.restore');
+    Route::post('clients/{id}/restore', [ClientController::class, 'productRestore'])->name('clients.clientRestore');
+    Route::get('clients/create',[ClientController::class, 'create'])->name('clients.create');
+    Route::post('clients',[ClientController::class, 'store'])->name('clients.store');
+    Route::get('clients/{id}', [ClientController::class, 'show'])->name('clients.show');
+    Route::get('clients/{id}/edit',[ClientController::class,'edit'])->name('clients.edit');
+    Route::put('clients/{id}',[ClientController::class,'update'])->name('clients.update');
+    Route::delete('clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');                                    
+
 
 
 

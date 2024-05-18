@@ -19,7 +19,7 @@
         </form>
 
         <div class="flex justify-end">
-            <LinkButton :href="route('products.create')" :active="route().current('products.create')">Ajouter produit</LinkButton>
+            <LinkButton :href="route('products.create')" :active="route().current('products.create')">Ajout produit</LinkButton>
             <LinkButton :href="route('products.restore')">Restorer</LinkButton>
         </div>
 
