@@ -7,7 +7,7 @@
         </template>
 
         
-        <form @submit.prevent="searchProducts" class="mb-4 flex ">
+        <form @submit.prevent="searchClients" class="mb-4 flex ">
             <input
                 type="text"
                 v-model="form.search"
@@ -37,6 +37,10 @@
                         <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
                             Téléphone
                         </th>
+                        <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
+                            Adresse
+                        </th>
+                       
                         <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600"></th>
                     
                         <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600"></th>
@@ -52,6 +56,9 @@
                         </td>
                         <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                             <p class="text-gray-900 whitespace-no-wrap">{{ client.phone }}</p>
+                        </td>
+                        <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                            <p class="text-gray-900 whitespace-no-wrap">{{ truncateText(client.adresse, 20) }}</p>
                         </td>
 
                         <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
@@ -96,5 +103,9 @@ const form = useForm({
 const searchClients = debounce(() => {
     form.get(route('clients.index'), { preserveState: true, replace: true });
 }, 300);
+
+function truncateText(text, length = 50, suffix = '...') {
+    return text.length > length ? text.substring(0, length) + suffix : text;
+}
 
 </script>

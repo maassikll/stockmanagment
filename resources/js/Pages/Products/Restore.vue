@@ -54,7 +54,7 @@
                             <p class="text-gray-900 whitespace-no-wrap">{{ product.profit }}</p>
                         </td>
                         <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                            <p class="text-gray-900 whitespace-no-wrap">{{ product.deleted_at }}</p>
+                            <p class="text-gray-900 whitespace-no-wrap">{{ truncateText(product.deleted_at, 20) }}</p>
                         </td>
 
                         <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
@@ -97,6 +97,11 @@ const form = useForm({});
 const restoreProduct = (id) => {
     form.post(route('products.productRestore', id));
 };
+
+
+function truncateText(text, length = 50, suffix = '') {
+    return text.length > length ? text.substring(0, length) + suffix : text;
+}
 
 
 </script>

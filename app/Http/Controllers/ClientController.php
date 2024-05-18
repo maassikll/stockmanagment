@@ -19,6 +19,7 @@ class ClientController extends Controller
             return $query->where('first_name', 'like', "%{$search}%")
             ->orWhere('last_name', 'like', "%{$search}%")
             ->orWhere('phone','like',"%{$search}%")
+            ->orWhere('adresse','like',"%{$search}%")
             ->orWhere('description','like',"%{$search}%");
         })
         ->paginate(10);
@@ -45,6 +46,7 @@ class ClientController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'phone' => 'string',
+            'adresse' => 'string',
             'description' => 'string',
         ]);
         $clientData = $request->all();
@@ -66,7 +68,7 @@ class ClientController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Client $client)
+    public function edit($id)
     {
         $client = Client::find($id);
         return Inertia::render('Clients/Edit',compact('client'));
@@ -81,6 +83,7 @@ class ClientController extends Controller
             'first_name' => 'string',
             'last_name' => 'string',
             'phone' => 'string',
+            'adresse' => 'string',
             'description' => 'string',
         ]);
 

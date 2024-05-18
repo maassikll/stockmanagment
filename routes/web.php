@@ -20,11 +20,10 @@ use App\Http\Controllers\ProfileController;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Auth/Login', [
         'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+        //'canRegister' => Route::has('register'),
+    
     ]);
 });
 
@@ -49,7 +48,7 @@ Route::middleware('auth')->group(function () {
     
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
     Route::get('clients/restore', [ClientController::class, 'restore'])->name('clients.restore');
-    Route::post('clients/{id}/restore', [ClientController::class, 'productRestore'])->name('clients.clientRestore');
+    Route::post('clients/{id}/restore', [ClientController::class, 'clientRestore'])->name('clients.clientRestore');
     Route::get('clients/create',[ClientController::class, 'create'])->name('clients.create');
     Route::post('clients',[ClientController::class, 'store'])->name('clients.store');
     Route::get('clients/{id}', [ClientController::class, 'show'])->name('clients.show');
