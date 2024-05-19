@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('factures', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_id');
-            $table->string('name');
+            $table->unsignedBigInteger('client_id')->nullable();
+            $table->string('name')->nullable();
             $table->binary('pdf_data');
             $table->timestamps();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\FactureController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 
@@ -54,7 +55,11 @@ Route::middleware('auth')->group(function () {
     Route::get('clients/{id}', [ClientController::class, 'show'])->name('clients.show');
     Route::get('clients/{id}/edit',[ClientController::class,'edit'])->name('clients.edit');
     Route::put('clients/{id}',[ClientController::class,'update'])->name('clients.update');
-    Route::delete('clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');                                    
+    Route::delete('clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy'); 
+    
+    Route::get('factures', [FactureController::class, 'index'])->name('factures.index'); 
+    Route::get('factures/facture',[FactureController::class, 'facture'])->name('factures.facture');
+
 
 
 
