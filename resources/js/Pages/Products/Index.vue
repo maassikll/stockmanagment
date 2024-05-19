@@ -6,8 +6,7 @@
             Stock Magasin
         </template>
 
-        
-        <form @submit.prevent="searchProducts" class="mb-4 flex ">
+        <form @submit.prevent="searchProducts" class="mb-4 flex">
             <input
                 type="text"
                 v-model="form.search"
@@ -15,19 +14,21 @@
                 class="w-full rounded-md border border-gray-300 p-2 m-1"
                 @input="searchProducts"
             />
-
         </form>
 
-        <div class="flex justify-end">
+        <div class="flex justify-end mb-4">
             <LinkButton :href="route('products.create')" :active="route().current('products.create')">Ajout produit</LinkButton>
             <LinkButton :href="route('products.restore')">Restorer</LinkButton>
+            <button @click="deleteSelectedProducts" class="ml-2 bg-red-500 text-white px-4 py-2 rounded">Supprimer Sélectionnés</button>
         </div>
-
 
         <div class="inline-block min-w-full overflow-hidden rounded-lg shadow">
             <table class="w-full whitespace-no-wrap">
                 <thead>
                     <tr class="border-b bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
+                            <input type="checkbox" @change="toggleAll">
+                        </th>
                         <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
                             Nom produit
                         </th>
@@ -49,6 +50,9 @@
                 <tbody>
                     <tr v-for="product in products.data" :key="product.id" class="text-gray-700">
                         <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                            <input type="checkbox" v-model="selectedProducts" :value="product.id">
+                        </td>
+                        <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                             <p class="text-gray-900 whitespace-no-wrap">{{ product.name }}</p>
                         </td>
                         <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
@@ -64,14 +68,11 @@
                             <p class="text-gray-900 whitespace-no-wrap">{{ product.profit }}</p>
                         </td>
 
-                        <td class="border-b border-gray-200 bg-white   px-0 py-2 text-xxs flex ">
+                        <td class="border-b border-gray-200 bg-white px-0 py-2 text-xxs flex">
                             <LinkButton :href="route('products.show', { id: product.id })" :active="route().current('products.show')">Detailes</LinkButton>
                             <LinkButton :href="route('products.edit', { id: product.id })" :active="route().current('products.edit')">Modifier</LinkButton>
-                            <LinkButton :href="route('products.destroy',product.id)"  method="DELETE">Supprimer</LinkButton>
-                   
+                            <LinkButton :href="route('products.destroy', product.id)" method="delete">Supprimer</LinkButton>
                         </td>
-
-
                     </tr>
                 </tbody>
             </table>
@@ -84,24 +85,55 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Pagination from '@/Components/Pagination.vue'
-import { Head, useForm } from '@inertiajs/vue3';
-import LinkButton from '@/Components/LinkButton.vue'
-import debounce from 'lodash.debounce'
+import Pagination from '@/Components/Pagination.vue';
+import { Head, useForm, router } from '@inertiajs/vue3';
+import LinkButton from '@/Components/LinkButton.vue';
+import debounce from 'lodash.debounce';
 
 const props = defineProps({
     products: Object,
     search: String
 });
 
-
 const form = useForm({
     search: props.search || '',
 });
+
+const selectedProducts = ref([]);
 
 const searchProducts = debounce(() => {
     form.get(route('products.index'), { preserveState: true, replace: true });
 }, 300);
 
+const toggleAll = (event) => {
+    if (event.target.checked) {
+        selectedProducts.value = props.products.data.map(product => product.id);
+    } else {
+        selectedProducts.value = [];
+    }
+};
+
+const deleteSelectedProducts = () => {
+    if (selectedProducts.value.length === 0) {
+        alert('Please select at least one product to delete.');
+        return;
+    }
+
+    if (confirm('Are you sure you want to delete the selected products?')) {
+        router.delete(route('products.destroyMultiple'), {
+            preserveState: true,
+            onSuccess: () => {
+                selectedProducts.value = [];
+            },
+            onError: (error) => {
+                console.error('Error deleting products:', error);
+            },
+            data: {
+                ids: selectedProducts.value
+            }
+        });
+    }
+};
 </script>

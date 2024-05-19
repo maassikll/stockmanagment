@@ -117,9 +117,30 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::find($id);
+        if (!$product) {
+            return redirect()->route('products.index');
+        }
+        
         $product->delete();
         return redirect()->route('products.index');
+    
     }
+
+    
+    public function destroyMultiple(Request $request){
+        
+        $ids = $request->ids;
+        if (!$ids || !is_array($ids)) {
+            return redirect()->route('products.index');
+        }
+
+        try {
+            Product::destroy($ids);
+            return redirect()->route('products.index');
+        } catch (\Exception $e) {
+            return redirect()->route('products.index');
+        }
+}
 
     public function productRestore($id){
         
@@ -127,5 +148,6 @@ class ProductController extends Controller
         $restoreProduct->restore();
         return redirect()->route('products.index');
     }
+
 
 }
