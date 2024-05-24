@@ -19,7 +19,7 @@
         <div class="flex justify-end mb-4">
             <LinkButton :href="route('products.create')" :active="route().current('products.create')">Ajout produit</LinkButton>
             <LinkButton :href="route('products.restore')">Restorer</LinkButton>
-            <button @click="deleteSelectedProducts" class="ml-2 bg-red-500 text-white px-4 py-2 rounded">Supprimer Sélectionnés</button>
+            <LinkButton @click="deleteSelectedProducts">Supprimer Sélectionnés</LinkButton>
         </div>
 
         <div class="inline-block min-w-full overflow-hidden rounded-lg shadow">
