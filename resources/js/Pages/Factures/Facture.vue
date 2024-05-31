@@ -203,15 +203,6 @@ const generatePDF = ($pdf) => {
 };
 
 
-const confirmGeneratePDF = () => {
-  generatePDF();
-  
-};
-
-const cancelGeneratePDF = () => {
-  showModal.value = false; // Hide the modal if the user cancels
-  // Optionally, you can add any other actions you want to perform when the user cancels
-};
 
 
 
