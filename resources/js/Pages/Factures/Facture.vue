@@ -7,19 +7,20 @@
     <div class="flex justify-center">
       <div class="container">
         <div class="form-section pr-4">
+          
           <form @submit.prevent="addProduct" class="w-full">
             <div class="mb-4">
-              <label for="client" class="block text-gray-700 text-sm font-bold mb-2">Client</label>
+              <label for="client" class="block text-gray-700 text-sm font-bold mb-2">Client(Facultatif):</label>
               <CustomDropdown v-model="selectedClient" :items="clientItems" placeholder="Séléctionner un client" searchPlaceholder="Rechercher un client" />
             </div>
   
             <div class="mb-4">
-              <label for="product" class="block text-gray-700 text-sm font-bold mb-2">Produit</label>
+              <label for="product" class="block text-gray-700 text-sm font-bold mb-2">Produit:</label>
               <CustomDropdown v-model="selectedProduct" :items="productItems" placeholder="Séléctionner un produit" searchPlaceholder="Rechercher un produit" />
             </div>
   
             <div class="mb-4">
-              <label for="quantity" class="block text-gray-700 text-sm font-bold mb-2">Quantité</label>
+              <label for="quantity" class="block text-gray-700 text-sm font-bold mb-2">Quantité:</label>
               <input type="number" id="quantity" v-model="quantity" min="1" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
             </div>
             
@@ -27,9 +28,24 @@
               <button type="submit" class="mx-auto block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Ajouter le Produit
               </button>
-              <button @click="generatePDF" class="mx-auto block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              
+              <button @click="showModal = true" class="mx-auto block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Imprimer la Facture
               </button>
+
+              
+                <!-- Modal Backdrop -->
+            <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+              <!-- Modal Content -->
+              <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                <h2 class="text-xl font-semibold mb-4">Saisie la valeur de verssement</h2>
+                <input type="text"/>
+                <div class="flex justify-end space-x-2">
+                  <ModalButton @click="showModal = false">Payé</ModalButton>
+                  <DeleteButton  @click="generatePDF">Non Payé</DeleteButton>
+                </div>
+              </div>
+            </div>
             </div>
           </form>
         </div>
@@ -88,12 +104,15 @@ import { Head } from '@inertiajs/vue3';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import CustomDropdown from '@/Components/CustomDropdown.vue'; // Import your custom dropdown component
+import CustomDropdown from '@/Components/CustomDropdown.vue'; 
+import ModalButton from '@/Components/ModalButton.vue';
+import DeleteButton from '@/Components/DeleteButton.vue';
 
 const props = defineProps({
   clients: Array,
   products: Array,
 });
+const showModal = ref(false);
 
 const selectedClient = ref(null);
 const selectedProduct = ref(null);
@@ -142,7 +161,7 @@ const calculateTotalAmount = () => {
 };
 
 
-const generatePDF = () => {
+const generatePDF = ($pdf) => {
   const doc = new jsPDF();
 
   // Access the value property of the ref object to get the array
@@ -178,9 +197,27 @@ const generatePDF = () => {
       }
     },
   });
-
-  doc.save('facture.pdf');
+  
+  $pdf = doc.save('facture.pdf');  
+  
 };
+
+
+const confirmGeneratePDF = () => {
+  generatePDF();
+  
+};
+
+const cancelGeneratePDF = () => {
+  showModal.value = false; // Hide the modal if the user cancels
+  // Optionally, you can add any other actions you want to perform when the user cancels
+};
+
+
+
+  
+
+
 
 </script>
 

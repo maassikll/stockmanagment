@@ -19,16 +19,13 @@
         <div class="flex justify-end mb-4">
             <LinkButton :href="route('products.create')" :active="route().current('products.create')">Ajout produit</LinkButton>
             <LinkButton :href="route('products.restore')">Restorer</LinkButton>
-            <LinkButton @click="deleteSelectedProducts">Supprimer Sélectionnés</LinkButton>
         </div>
 
         <div class="inline-block min-w-full overflow-hidden rounded-lg shadow">
             <table class="w-full whitespace-no-wrap">
                 <thead>
                     <tr class="border-b bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                        <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
-                            <input type="checkbox" @change="toggleAll">
-                        </th>
+                        
                         <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
                             Nom produit
                         </th>
@@ -49,9 +46,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="product in products.data" :key="product.id" class="text-gray-700">
-                        <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                            <input type="checkbox" v-model="selectedProducts" :value="product.id">
-                        </td>
+                        
                         <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                             <p class="text-gray-900 whitespace-no-wrap">{{ product.name }}</p>
                         </td>
@@ -88,7 +83,7 @@
 import { ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
+import { Head, useForm, router  } from '@inertiajs/vue3';
 import LinkButton from '@/Components/LinkButton.vue';
 import debounce from 'lodash.debounce';
 
@@ -107,33 +102,7 @@ const searchProducts = debounce(() => {
     form.get(route('products.index'), { preserveState: true, replace: true });
 }, 300);
 
-const toggleAll = (event) => {
-    if (event.target.checked) {
-        selectedProducts.value = props.products.data.map(product => product.id);
-    } else {
-        selectedProducts.value = [];
-    }
-};
 
-const deleteSelectedProducts = () => {
-    if (selectedProducts.value.length === 0) {
-        alert('Please select at least one product to delete.');
-        return;
-    }
 
-    if (confirm('Are you sure you want to delete the selected products?')) {
-        router.delete(route('products.destroyMultiple'), {
-            preserveState: true,
-            onSuccess: () => {
-                selectedProducts.value = [];
-            },
-            onError: (error) => {
-                console.error('Error deleting products:', error);
-            },
-            data: {
-                ids: selectedProducts.value
-            }
-        });
-    }
-};
+
 </script>

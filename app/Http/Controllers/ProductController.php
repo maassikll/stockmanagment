@@ -125,22 +125,8 @@ class ProductController extends Controller
         return redirect()->route('products.index');
     
     }
-
     
-    public function destroyMultiple(Request $request){
-        
-        $ids = $request->ids;
-        if (!$ids || !is_array($ids)) {
-            return redirect()->route('products.index');
-        }
 
-        try {
-            Product::destroy($ids);
-            return redirect()->route('products.index');
-        } catch (\Exception $e) {
-            return redirect()->route('products.index');
-        }
-}
 
     public function productRestore($id){
         
