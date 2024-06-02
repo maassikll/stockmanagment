@@ -38,11 +38,15 @@
             <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
               <!-- Modal Content -->
               <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-                <h2 class="text-xl font-semibold mb-4">Saisie la valeur de verssement</h2>
-                <input type="text"/>
+                <hTwoTitle title ="Choisissez une option" class="text-center"/>
                 <div class="flex justify-end space-x-2">
-                  <ModalButton @click="showModal = false">Payé</ModalButton>
-                  <DeleteButton  @click="generatePDF">Non Payé</DeleteButton>
+                
+                <TextInput id="verssment" type="number" class="mt-5 block w-full h-1/2" placeholder="Versssement" />
+                <PaidButton @click="generatePDF" class="mt-5 block w-1/2 h-1/2 bg-blue" >Payé</PaidButton>
+                <UnPaidButton @click="generatePDF" class="mt-5 block w-1/2 h-1/2" >Non Payé</UnPaidButton>
+                </div>
+                <div class="flex justify-end space-x-2">
+                  <DeleteButton  @click="showModal = false" >Annuler</DeleteButton>
                 </div>
               </div>
             </div>
@@ -107,7 +111,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import CustomDropdown from '@/Components/CustomDropdown.vue'; 
 import ModalButton from '@/Components/ModalButton.vue';
 import DeleteButton from '@/Components/DeleteButton.vue';
-
+import TextInput from '@/Components/TextInput.vue';
+import hTwoTitle from '@/Components/hTwoTitle.vue'
+import PaidButton from '@/Components/PaidButton.vue'
+import UnPaidButton from '@/Components/UnPaidButton.vue'
 const props = defineProps({
   clients: Array,
   products: Array,
