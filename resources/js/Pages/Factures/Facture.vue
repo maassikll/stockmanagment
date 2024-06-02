@@ -25,13 +25,13 @@
             </div>
             
             <div class="flex justify-center">
-              <button type="submit" class="mx-auto block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              <PaidButton type="submit" class="mx-auto block">
                 Ajouter le Produit
-              </button>
+              </PaidButton>
               
-              <button @click="showModal = true" class="mx-auto block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              <PrintButton @click="showModal = true" class="mx-auto block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Imprimer la Facture
-              </button>
+              </PrintButton>
 
               
                 <!-- Modal Backdrop -->
@@ -87,8 +87,8 @@
               <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                 <p class="text-gray-900 whitespace-no-wrap">{{ item.quantity * item.product.selling_price }}</p>
               </td>
-              <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <button @click="removeItem(index)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline">Retirer</button>
+              <td class="border-b border-gray-200 bg-white px-2 py-2 text-sm">
+                <RetireButton @click="removeItem(index)" >Retirer</RetireButton>
               </td>
             </tr>
           </tbody>
@@ -104,17 +104,17 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { Head } from '@inertiajs/vue3';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import CustomDropdown from '@/Components/CustomDropdown.vue'; 
-import ModalButton from '@/Components/ModalButton.vue';
 import DeleteButton from '@/Components/DeleteButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import hTwoTitle from '@/Components/hTwoTitle.vue'
 import PaidButton from '@/Components/PaidButton.vue'
 import UnPaidButton from '@/Components/UnPaidButton.vue'
+import PrintButton from '@/Components/PrintButton.vue'
+import RetireButton from '@/Components/RetireButton.vue'
 const props = defineProps({
   clients: Array,
   products: Array,
@@ -125,6 +125,7 @@ const selectedClient = ref(null);
 const selectedProduct = ref(null);
 const quantity = ref(1);
 const invoiceItems = ref([]);
+const totalPay = ref(0);
 
 // Convert clients and products to items format for dropdown
 const clientItems = computed(() => {
@@ -193,7 +194,11 @@ const generatePDF = ($pdf) => {
 
   // Add a row for the total amount
   doc.autoTable({
-    body: [['', '', '', 'Montant Total:', totalAmount]],
+    body: [
+      ['', '', '', 'Montant Total:', totalAmount],
+      ['', '', '', 'Total Payé:', totalPay]
+  
+  ],
     startY: doc.autoTable.previous.finalY + 10, // Start the new table below the previous one
     theme: 'plain', // Use a plain theme to avoid border conflicts
     didDrawCell: (data) => {
