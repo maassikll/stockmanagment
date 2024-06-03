@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from 'vue';
-import { Link } from '@inertiajs/vue3';
 
 const props = defineProps(['', 'active']);
 
@@ -14,7 +13,7 @@ const classes = computed(() => props.active
     <button
         :class="classes"
         :type="type"
-        class="inline-flex items-center justify-center   px-2 py-1 bg-white border border-blue-500 rounded-md font-semibold text-xs text-blue-700 uppercase tracking-widest shadow-xs hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150"
+    class="inline-flex items-center justify-center  px-2 h-1/2 bg-white border border-blue-500 rounded-md font-semibold text-xs text-indigo-500 uppercase tracking-widest shadow-xs hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150"
     >
         <slot />
     </button>

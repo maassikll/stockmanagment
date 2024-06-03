@@ -29,7 +29,7 @@
                 Ajouter le Produit
               </PaidButton>
               
-              <PrintButton @click="showModal = true" class="mx-auto block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              <PrintButton @click="showModal = true" class="mx-auto block py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Imprimer la Facture
               </PrintButton>
 
@@ -42,8 +42,8 @@
                 <div class="flex justify-end space-x-2">
                 
                 <TextInput id="verssment" type="number" class="mt-5 block w-full h-1/2" placeholder="Versssement" />
-                <PaidButton @click="generatePDF" class="mt-5 block w-1/2 h-1/2 bg-blue" >Payé</PaidButton>
-                <UnPaidButton @click="generatePDF" class="mt-5 block w-1/2 h-1/2" >Non Payé</UnPaidButton>
+                <PaidButton @click="generatePDF" class="mt-5 block w-1/2 " >Payé</PaidButton>
+                <UnPaidButton @click="generatePDF" class="mt-5 block w-1/2" >Non Payé</UnPaidButton>
                 </div>
                 <div class="flex justify-end space-x-2">
                   <DeleteButton  @click="showModal = false" >Annuler</DeleteButton>
