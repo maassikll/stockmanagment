@@ -39,13 +39,14 @@
               <!-- Modal Content -->
               <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                 <hTwoTitle title ="Choisissez une option" class="text-center"/>
-                <div class="flex justify-end space-x-2">
+                <div>
+                <InputLabel for="verssment" value="Verrssement"/>
+                <TextInput id="verssment" type="number" class="block w-full " placeholder="Versssement" />
                 
-                <TextInput id="verssment" type="number" class="mt-5 block w-full h-1/2" placeholder="Versssement" />
-                <PaidButton @click="generatePDF" class="mt-5 block w-1/2 " >Payé</PaidButton>
-                <UnPaidButton @click="generatePDF" class="mt-5 block w-1/2" >Non Payé</UnPaidButton>
                 </div>
                 <div class="flex justify-end space-x-2">
+                  <PaidButton @click="generatePDF(true)" class="mt-5 block w-1/2" >Payé</PaidButton>
+                  <UnPaidButton @click="generatePDF(false)" class="mt-5 block w-1/2" >Non Payé</UnPaidButton>
                   <DeleteButton  @click="showModal = false" >Annuler</DeleteButton>
                 </div>
               </div>
@@ -115,6 +116,7 @@ import PaidButton from '@/Components/PaidButton.vue'
 import UnPaidButton from '@/Components/UnPaidButton.vue'
 import PrintButton from '@/Components/PrintButton.vue'
 import RetireButton from '@/Components/RetireButton.vue'
+import InputLabel from '@/Components/InputLabel.vue';
 const props = defineProps({
   clients: Array,
   products: Array,
@@ -125,7 +127,9 @@ const selectedClient = ref(null);
 const selectedProduct = ref(null);
 const quantity = ref(1);
 const invoiceItems = ref([]);
-const totalPay = ref(0);
+let paidAmount;
+
+
 
 // Convert clients and products to items format for dropdown
 const clientItems = computed(() => {
@@ -169,7 +173,8 @@ const calculateTotalAmount = () => {
 };
 
 
-const generatePDF = ($pdf) => {
+const generatePDF = ($paid) => {
+
   const doc = new jsPDF();
 
   // Access the value property of the ref object to get the array
@@ -179,6 +184,21 @@ const generatePDF = ($pdf) => {
   const totalAmount = items.reduce((total, item) => {
     return total + item.quantity * item.product.selling_price;
   }, 0);
+
+
+  let verssment = document.getElementById('verssment').value;
+
+  if($paid){
+    if (!verssment) {
+      paidAmount = totalAmount;
+    }else{
+      paidAmount = verssment;
+    }
+    
+  }else {
+    paidAmount = 0;
+  }
+
 
   // Add table for invoice items
   doc.autoTable({
@@ -196,7 +216,7 @@ const generatePDF = ($pdf) => {
   doc.autoTable({
     body: [
       ['', '', '', 'Montant Total:', totalAmount],
-      ['', '', '', 'Total Payé:', totalPay]
+      ['', '', '', 'Total Payé:', paidAmount]
   
   ],
     startY: doc.autoTable.previous.finalY + 10, // Start the new table below the previous one
@@ -210,7 +230,7 @@ const generatePDF = ($pdf) => {
     },
   });
   
-  $pdf = doc.save('facture.pdf');  
+  doc.save('facture.pdf');  
   
 };
 
