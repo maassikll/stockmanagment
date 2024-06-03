@@ -20,7 +20,7 @@ class CreditController extends Controller
      */
     public function create()
     {
-        //
+        //hell yeah
     }
 
     /**
