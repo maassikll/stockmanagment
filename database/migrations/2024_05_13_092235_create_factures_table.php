@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('client_id')->nullable();
             $table->string('name')->nullable();
             $table->binary('pdf_data');
+            $table->string('credit')->nullable();
             $table->timestamps();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
         });

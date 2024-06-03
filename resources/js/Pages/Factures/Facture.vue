@@ -8,10 +8,10 @@
       <div class="container">
         <div class="form-section pr-4">
           
-          <form @submit.prevent="addProduct" class="w-full">
+          <form @submit.prevent="submit" class="w-full">
             <div class="mb-4">
-              <label for="client" class="block text-gray-700 text-sm font-bold mb-2">Client(Facultatif):</label>
-              <CustomDropdown v-model="selectedClient" :items="clientItems" placeholder="Séléctionner un client" searchPlaceholder="Rechercher un client" />
+              <label  for="client" class="block text-gray-700 text-sm font-bold mb-2">Client(Facultatif):</label>
+              <CustomDropdown  v-model="selectedClient" :items="clientItems" placeholder="Séléctionner un client" searchPlaceholder="Rechercher un client" />
             </div>
   
             <div class="mb-4">
@@ -25,7 +25,7 @@
             </div>
             
             <div class="flex justify-center">
-              <PaidButton type="submit" class="mx-auto block">
+              <PaidButton  @click="addProduct" class="mx-auto block">
                 Ajouter le Produit
               </PaidButton>
               
@@ -48,6 +48,8 @@
                   <PaidButton @click="generatePDF(true)" class="mt-5 block w-1/2" >Payé</PaidButton>
                   <UnPaidButton @click="generatePDF(false)" class="mt-5 block w-1/2" >Non Payé</UnPaidButton>
                   <DeleteButton  @click="showModal = false" >Annuler</DeleteButton>
+                  <PaidButton @click="generateAndSubmitPdf" class="mt-5 block w-1/2" >save</PaidButton>
+                  
                 </div>
               </div>
             </div>
@@ -105,6 +107,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { Head, useForm } from "@inertiajs/vue3";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -120,6 +123,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 const props = defineProps({
   clients: Array,
   products: Array,
+  invoice:Object,
 });
 const showModal = ref(false);
 
@@ -131,11 +135,10 @@ let paidAmount;
 
 
 
-// Convert clients and products to items format for dropdown
 const clientItems = computed(() => {
   return props.clients.map(client => ({
     id: client.id,
-    label: client.first_name,
+    label: client.first_name+' '+client.last_name,
     value: client.id
   }));
 });
@@ -166,21 +169,123 @@ const removeItem = (index) => {
 
 const calculateTotalAmount = () => {
   let total = 0;
-  for (const item of invoiceItems.value) { // Access the value property of the ref object
+  for (const item of invoiceItems.value) { 
     total += item.quantity * item.product.selling_price;
   }
   return total;
 };
 
+const loadImage = (src) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = (error) => reject(error);
+    img.src = src;
+  });
+};
 
-const generatePDF = ($paid) => {
+const form = useForm({
+  client_id:'',
+  name:'',
+  pdf_data:'',
+  credit:'',
+})
+const savePDF = async ($paid) => {
+
+const [logo] = await Promise.all([
+  loadImage('/img/logoBillal.jpg')
+]);
+
+const doc = new jsPDF();
+
+const logoWidth = 40;
+const logoHeight = (logoWidth * logo.height) / logo.width;
+doc.addImage(logo, 'JPEG', 170, 0, logoWidth, logoHeight);
+doc.text('Elec Billal',178,35);
+
+doc.setFont('times', 'normal');
+doc.setFontSize(16);
+
+const items = invoiceItems.value;
+const selectedClientObject = clientItems.value.find(client => client.id === selectedClient.value);
+const selectedClientName = selectedClientObject ? selectedClientObject.label : '';
+
+
+const totalAmount = items.reduce((total, item) => {
+  return total + item.quantity * item.product.selling_price;
+}, 0);
+
+
+let verssment = document.getElementById('verssment').value;
+
+if($paid){
+  if (!verssment) {
+    paidAmount = totalAmount;
+  }else{
+    paidAmount = verssment;
+  }
+  
+}else {
+  paidAmount = 0;
+}
+
+doc.text("Tél 0 44 93 35 99", 90, 10);
+doc.setFontSize(10);
+doc.text("Fourniture: électrique", 10, 15);
+doc.setFontSize(15);
+doc.text(`BON N° :`, 10, 22);
+if(selectedClientName){
+  doc.text(`POUR :${selectedClientName}`, 10, 29);
+}else{
+  doc.text(`POUR :Passager`, 10, 27);
+}
+
+
+await doc.autoTable({
+  head: [['N°', 'Désignation', 'Quantité', 'Prix Unitaire', 'Montant']],
+  body: items.map((item, index) => [
+    index + 1,
+    item.product.name,
+    item.quantity,
+    item.product.selling_price,
+    item.quantity * item.product.selling_price,
+  ]),
+  startY:50
+});
+
+doc.setFontSize(14);
+doc.text(`Montant total : ${totalAmount}`, 150, doc.autoTable.previous.finalY + 10);
+doc.text(`Montant payer : ${paidAmount}`, 150, doc.autoTable.previous.finalY + 15);
+doc.text(`Montant restant : ${totalAmount - paidAmount}`, 150, doc.autoTable.previous.finalY + 20);
+doc.setFontSize(12);
+doc.text('Merci pour votre visite', 90, doc.autoTable.previous.finalY + 35);
+
+
+return doc.output('blob');  
+
+};
+
+const generatePDF = async ($paid) => {
+
+  const [logo] = await Promise.all([
+    loadImage('/img/logoBillal.jpg')
+  ]);
 
   const doc = new jsPDF();
 
-  // Access the value property of the ref object to get the array
-  const items = invoiceItems.value;
+  const logoWidth = 40;
+  const logoHeight = (logoWidth * logo.height) / logo.width;
+  doc.addImage(logo, 'JPEG', 170, 0, logoWidth, logoHeight);
+  doc.text('Elec Billal',178,35);
 
-  // Calculate total amount
+  doc.setFont('times', 'normal');
+  doc.setFontSize(16);
+
+  const items = invoiceItems.value;
+  const selectedClientObject = clientItems.value.find(client => client.id === selectedClient.value);
+  const selectedClientName = selectedClientObject ? selectedClientObject.label : '';
+
+
   const totalAmount = items.reduce((total, item) => {
     return total + item.quantity * item.product.selling_price;
   }, 0);
@@ -199,9 +304,19 @@ const generatePDF = ($paid) => {
     paidAmount = 0;
   }
 
-
-  // Add table for invoice items
-  doc.autoTable({
+  doc.text("Tél 0 44 93 35 99", 90, 10);
+  doc.setFontSize(10);
+  doc.text("Fourniture: électrique", 10, 15);
+  doc.setFontSize(15);
+  doc.text(`BON N° :`, 10, 22);
+  if(selectedClientName){
+    doc.text(`POUR :${selectedClientName}`, 10, 29);
+  }else{
+    doc.text(`POUR :Passager`, 10, 27);
+  }
+  
+ 
+  await doc.autoTable({
     head: [['N°', 'Désignation', 'Quantité', 'Prix Unitaire', 'Montant']],
     body: items.map((item, index) => [
       index + 1,
@@ -210,40 +325,28 @@ const generatePDF = ($paid) => {
       item.product.selling_price,
       item.quantity * item.product.selling_price,
     ]),
+    startY:50
   });
 
-  // Add a row for the total amount
-  doc.autoTable({
-    body: [
-      ['', '', '', 'Montant Total:', totalAmount],
-      ['', '', '', 'Total Payé:', paidAmount]
+  doc.setFontSize(14);
+  doc.text(`Montant total : ${totalAmount}`, 150, doc.autoTable.previous.finalY + 10);
+  doc.text(`Montant payer : ${paidAmount}`, 150, doc.autoTable.previous.finalY + 15);
+  doc.text(`Montant restant : ${totalAmount - paidAmount}`, 150, doc.autoTable.previous.finalY + 20);
+  doc.setFontSize(12);
+  doc.text('Merci pour votre visite', 90, doc.autoTable.previous.finalY + 35);
   
-  ],
-    startY: doc.autoTable.previous.finalY + 10, // Start the new table below the previous one
-    theme: 'plain', // Use a plain theme to avoid border conflicts
-    didDrawCell: (data) => {
-      if (data.column.index === 3 && data.row.index === 0) {
-        // Style the cell containing the total amount
-        doc.setTextColor(255, 0, 0); // Red color for emphasis
-        
-      }
-    },
-  });
-  
-  doc.save('facture.pdf');  
+
+  return doc.save(`facture.pdf`);  
   
 };
 
-
-
-
-
+async function generateAndSubmitPdf() {
   
-
-
-
+  const pdfData = await savePDF();
+  form.pdf_data = pdfData;
+  form.client_id = selectedClient.value || null;
+  form.credit = calculateTotalAmount() - paidAmount.value;
+  form.post(route('factures.store'));
+}
 </script>
 
-<style scoped>
-/* Add any custom styles here */
-</style>

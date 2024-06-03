@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
     
     Route::get('factures', [FactureController::class, 'index'])->name('factures.index'); 
     Route::get('factures/facture',[FactureController::class, 'facture'])->name('factures.facture');
+    Route::post('factures/facture',[FactureController::class, 'store'])->name('factures.store');
 
 
 

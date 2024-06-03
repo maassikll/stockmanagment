@@ -21,6 +21,7 @@ class Facture extends Model
         'client_id',
         'name',
         'pdf_data',
+        'credit',
         
     ];
 
