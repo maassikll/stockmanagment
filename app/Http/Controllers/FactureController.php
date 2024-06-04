@@ -20,8 +20,10 @@ class FactureController extends Controller
         $factures = Facture::with('client:id,first_name,last_name')
             ->select('id', 'name', 'client_id', 'credit', 'created_at', 'updated_at') 
             ->when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%")
-                            ->orWhere('id', 'like', "%{$search}%");
+                return $query->whereHas('client', function ($query) use ($search) {
+                                $query->where('first_name', 'like', "%{$search}%")
+                                    ->orWhere('last_name', 'like', "%{$search}%");
+                            });
             })
             ->paginate(10);
 
@@ -55,6 +57,7 @@ class FactureController extends Controller
             'pdf_data' => 'required|file|mimes:pdf',
             'credit' => 'nullable|string|max:255',
         ]);
+
 
         $invoice = new Facture();
         $invoice->client_id = $request->input('client_id');

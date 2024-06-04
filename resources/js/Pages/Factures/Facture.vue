@@ -48,7 +48,7 @@
                   <PaidButton @click="generatePDF(true)" class="mt-5 block w-1/2" >Payé</PaidButton>
                   <UnPaidButton @click="generatePDF(false)" class="mt-5 block w-1/2" >Non Payé</UnPaidButton>
                   <DeleteButton  @click="showModal = false" >Annuler</DeleteButton>
-                  <PaidButton @click="generateAndSubmitPdf" class="mt-5 block w-1/2" >save</PaidButton>
+                  
                   
                 </div>
               </div>
@@ -132,7 +132,7 @@ const selectedProduct = ref(null);
 const quantity = ref(1);
 const invoiceItems = ref([]);
 let paidAmount;
-
+let reste = 0;
 
 
 const clientItems = computed(() => {
@@ -335,18 +335,16 @@ const generatePDF = async ($paid) => {
   doc.setFontSize(12);
   doc.text('Merci pour votre visite', 90, doc.autoTable.previous.finalY + 35);
   
-
+  reste = totalAmount - paidAmount;
+  const pdfData = await savePDF();
+  form.pdf_data = pdfData;
+  form.client_id = selectedClient.value || null;
+  form.credit = reste;
+  form.post(route('factures.store'));
   return doc.save(`facture.pdf`);  
   
 };
 
-async function generateAndSubmitPdf() {
-  
-  const pdfData = await savePDF();
-  form.pdf_data = pdfData;
-  form.client_id = selectedClient.value || null;
-  form.credit = calculateTotalAmount() - paidAmount.value;
-  form.post(route('factures.store'));
-}
+
 </script>
 

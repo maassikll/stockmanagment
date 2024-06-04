@@ -2,17 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Credit;
+use App\Models\Facture;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CreditController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        
+        $search = $request->input('search');
+        $factures = Facture::with('client:id,first_name,last_name')
+            ->select('client_id', DB::raw('SUM(credit) as total_credit')) 
+            ->when($search, function ($query, $search) {
+                return $query->where('id', 'like', "%{$search}%")
+                            ->orWhereHas('client', function ($query) use ($search) {
+                                $query->where('first_name', 'like', "%{$search}%")
+                                    ->orWhere('last_name', 'like', "%{$search}%");
+                            });
+            })
+            ->groupBy('client_id')
+            ->paginate(10);
+
+        return Inertia::render('Credits/Index', [
+            'factures' => $factures,
+            'search' => $search
+        ]);
     }
 
     /**

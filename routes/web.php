@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\CreditController;
 use App\Http\Controllers\FactureController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -61,7 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('factures/facture',[FactureController::class, 'facture'])->name('factures.facture');
     Route::post('factures/facture',[FactureController::class, 'store'])->name('factures.store');
 
-
+    Route::get('credits',[CreditController::class, 'index'])->name('credits.index');
 
 
 

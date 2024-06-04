@@ -36,7 +36,7 @@
                         </th>
                         
                         <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
-                            Crédit
+                            Status
                         </th>
                     </tr>
                 </thead>
@@ -46,15 +46,23 @@
                             <p class="text-gray-900 whitespace-no-wrap">{{ facture.id }}</p>
                         </td>
                         
-                        <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                            <p class="text-gray-900 whitespace-no-wrap">{{ facture.client ? `${facture.client.first_name} ${facture.client.last_name}` : '' }}</p>
+                        <td v-if="facture.client" class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                            <p class="text-gray-900 whitespace-no-wrap">{{ facture.client ? `${facture.client.first_name} ${facture.client.last_name}` : '' }}_{{ truncateText(facture.created_at, 10)}}</p>
                         </td>
+                        <td v-else class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                            <p class="text-gray-900 whitespace-no-wrap">Passager_{{ truncateText(facture.created_at,10) }}</p>
+                        </td>
+                        
 
                         
-                        <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                            <p class="text-gray-900 whitespace-no-wrap">{{ facture.credit }}</p>
+                        <td v-if="facture.credit>0" class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                            <a :href="route('credits.index')" class="text-red-500 whitespace-no-wrap">Non payer</a>
                         </td>
 
+                        <td v-else class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                            <p class="text-green-500 whitespace-no-wrap">Payer</p>
+                        </td>
+                        
 
                     </tr>
                 </tbody>
@@ -87,5 +95,9 @@ const form = useForm({
 const searchFactures = debounce(() => {
     form.get(route('factures.index'), { preserveState: true, replace: true });
 }, 300);
+
+function truncateText(text, length = 50, suffix = '') {
+    return text.length > length ? text.substring(0, length) + suffix : text;
+}
 
 </script>
