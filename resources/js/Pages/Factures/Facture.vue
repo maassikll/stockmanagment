@@ -19,10 +19,11 @@
               <CustomDropdown v-model="selectedProduct" :items="productItems" placeholder="Séléctionner un produit" searchPlaceholder="Rechercher un produit" />
             </div>
   
-            <div class="mb-4">
+            <div  class="mb-4">
               <label for="quantity" class="block text-gray-700 text-sm font-bold mb-2">Quantité:</label>
               <input type="number" id="quantity" v-model="quantity" min="1" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
             </div>
+
             
             <div class="flex justify-center">
               <PaidButton  @click="addProduct" class="mx-auto block">

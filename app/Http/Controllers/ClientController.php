@@ -43,11 +43,11 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'phone' => 'string',
-            'adresse' => 'string',
-            'description' => 'string',
+            'first_name' => 'required|string|min:5|max:255',
+            'last_name' => 'required|string|min:5|max:255',
+            'phone' => 'nullable|string|min:5|max:255',
+            'adresse' => 'nullable|string|min:5|max:255',
+            'description' => 'nullable|string|min:5|max:255',
         ]);
         $clientData = $request->all();
         $client = new Client($clientData);
@@ -80,11 +80,11 @@ class ClientController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'first_name' => 'string',
-            'last_name' => 'string',
-            'phone' => 'string',
-            'adresse' => 'string',
-            'description' => 'string',
+            'first_name' => 'string|min:5|max:255',
+            'last_name' => 'string|min:5|max:255',
+            'phone' => 'string|min:5|max:255',
+            'adresse' => 'string|min:5|max:255',
+            'description' => 'string|min:5|max:255',
         ]);
 
         $clientData = $request->all();

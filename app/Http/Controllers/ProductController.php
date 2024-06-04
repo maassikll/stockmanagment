@@ -55,10 +55,11 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string',
-            'selling_price' => 'required|numeric',
-            'init_price' => 'required|numeric',
-            'description' => 'string',
+            'name' => 'required|string|min:5|max:255',
+            'qte' => 'nullable|numeric|max:999999',
+            'selling_price' => 'required|numeric|max:999999',
+            'init_price' => 'required|numeric|max:999999.99',
+            'description' => 'nullable|string|max:255',
             
         ]);
     
@@ -96,10 +97,10 @@ class ProductController extends Controller
     {
                 
         $request->validate([
-            'name' => 'string',
-            'selling_price' => 'numeric',
-            'init_price' => 'numeric',
-            'description' => 'string',
+            'name' => 'string|min:5|max:255',
+            'selling_price' => 'numeric|max:999999.99',
+            'init_price' => 'numeric|max:999999.99',
+            'description' => 'nullable|string|max:255',
         ]);
 
         $productData = $request->all();

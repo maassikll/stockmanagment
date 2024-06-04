@@ -30,12 +30,12 @@
 
             <div class="mt-3">
                 <InputLabel for="selling_price" value="Prix de vente" />
-                <TextInput id="selling_price" type="number" class="mt-1 block w-full" v-model="form.selling_price" required autocomplete="selling_price" />
+                <TextInput id="selling_price" maxlength="10" type="number" class="mt-1 block w-full" v-model="form.selling_price" required autocomplete="selling_price" />
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
             <div class="mt-3">
-                <InputLabel for="description" value="Description" />
-                <TextInput id="description" type="text" class="mt-1 block w-full" v-model="form.description" required autocomplete="description" />
+                <InputLabel for="description" value="Description(Facultatif)" />
+                <TextInput id="description" type="text" class="mt-1 block w-full" v-model="form.description"  autocomplete="description" />
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
 

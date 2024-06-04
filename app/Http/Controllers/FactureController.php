@@ -52,10 +52,10 @@ class FactureController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'client_id' => 'nullable|exists:clients,id',
-            'name' => 'nullable|string|max:255',
+            'client_id' => 'nullable|exists:clients,id|max:255',
+            'name' => 'nullable|string|min:5|max:255',
             'pdf_data' => 'required|file|mimes:pdf',
-            'credit' => 'nullable|string|max:255',
+            'credit' => 'nullable|string|min:5|max:255',
         ]);
 
 
