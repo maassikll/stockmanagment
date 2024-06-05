@@ -22,6 +22,7 @@ class Facture extends Model
         'name',
         'pdf_data',
         'credit',
+        'status',
         
     ];
 

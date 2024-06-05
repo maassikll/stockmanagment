@@ -18,15 +18,16 @@ class CreditController extends Controller
         
         $search = $request->input('search');
         $factures = Facture::with('client:id,first_name,last_name')
-            ->select('client_id', DB::raw('SUM(credit) as total_credit')) 
+            ->select('id','client_id','status', DB::raw('SUM(credit) as total_credit')) 
             ->when($search, function ($query, $search) {
                 return $query->where('id', 'like', "%{$search}%")
                             ->orWhereHas('client', function ($query) use ($search) {
                                 $query->where('first_name', 'like', "%{$search}%")
-                                    ->orWhere('last_name', 'like', "%{$search}%");
+                                    ->orWhere('last_name', 'like', "%{$search}%")
+                                    ->orWhere('status','like',"%{$search}%");
                             });
             })
-            ->groupBy('client_id')
+            ->groupBy('client_id','status','id')
             ->paginate(10);
 
         return Inertia::render('Credits/Index', [
@@ -62,17 +63,60 @@ class CreditController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Credit $credit)
+    public function edit($id)
     {
-        //
+        $credit = Facture::find($id);
+        return Inertia::render('Credits/Edit',[
+            'credit' => [
+                'id' => $credit->id,
+                'client_id' => $credit->client_id,
+                'name' => $credit->name,
+                'credit' => $credit->credit,
+                'status' => $credit->status,
+            ],
+        ]
+        );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Credit $credit)
+    public function update(Request $request, $id)
     {
-        //
+
+        
+        $credit = Facture::findOrFail($id);
+          
+          $validated = $request->validate([
+            'status' => 'required|string',
+            'credit' => 'nullable|string',
+        ]);
+
+        if ($request->input('status') === 'payer') {
+            
+            $credit->credit = 0;
+            
+            $credit->update([
+            'status' => $request->input('status'),
+            'credit' => $credit->credit,
+            
+        ]);
+        }else{
+            
+            $credit->update([
+            'status' => $request->input('status'),
+            'credit' => $request->input('credit'),
+            
+        ]);
+        }
+
+        
+
+        
+
+        // Redirect to the index route
+        return redirect()->route('credits.index');
+    
     }
 
     /**

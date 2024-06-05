@@ -32,6 +32,8 @@
                       <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
                           Status
                       </th>
+                      <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
+                      </th>
                   </tr>
               </thead>
               <tbody>
@@ -45,21 +47,28 @@
                       <td v-else class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                           <p class="text-gray-900 whitespace-no-wrap">Passager</p>
                       </td>
-                      <td v-if="facture.total_credit>0" class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                          <p class="text-red-500 whitespace-no-wrap">{{ facture.total_credit }}</p>
+                      <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                          <p class="text-gray-900 whitespace-no-wrap">{{ facture.total_credit }}</p>
                       </td>
-                      
-                      <td v-else class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                          <p class="text-green-500 whitespace-no-wrap">{{ facture.total_credit }}</p>
+                  
+
+                      <td v-if="facture.status=='payer'" class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                          <button class="text-green-500 whitespace-no-wrap">{{ facture.status }}</button>
                       </td>
 
-                      <td v-if="facture.total_credit==0" class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                          <p class="text-green-500 whitespace-no-wrap">Payer</p>
+                      <td v-else="facture.status=='non_payer'" class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                          <button   class="text-red-500 whitespace-no-wrap">{{ facture.status }}</button>
                       </td>
-                      
-                      <td v-else class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                          <p class="text-red-500 whitespace-no-wrap">Non Payer</p>
-                      </td>
+
+                     
+
+                      <td class="border-b border-gray-200 bg-white px-0 py-2 text-xxs flex">
+                    
+                        <LinkButton :href="route('credits.edit', { id: facture.id })" :active="route().current('credits.edit')">Modifier</LinkButton>
+                            
+                        </td>
+                     
+                     
                   </tr>
               </tbody>
           </table>
@@ -74,13 +83,14 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue'
-import { Head, useForm } from '@inertiajs/vue3';
 import LinkButton from '@/Components/LinkButton.vue'
+import { Head, useForm, router } from '@inertiajs/vue3';
 import debounce from 'lodash.debounce'
 
 const props = defineProps({
   factures: Object,
-  search: String
+  search: String,
+  
 });
 
 
@@ -91,5 +101,8 @@ const form = useForm({
 const searchCredits = debounce(() => {
   form.get(route('credits.index'), { preserveState: true, replace: true });
 }, 300);
+
+
+
 
 </script>

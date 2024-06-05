@@ -34,9 +34,14 @@
                         <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
                             Nom facture
                         </th>
+                        <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
+                            Credit
+                        </th>
                         
                         <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
                             Status
+                        </th>
+                        <th class="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
                         </th>
                     </tr>
                 </thead>
@@ -52,17 +57,23 @@
                         <td v-else class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                             <p class="text-gray-900 whitespace-no-wrap">Passager_{{ truncateText(facture.created_at,10) }}</p>
                         </td>
-                        
 
-                        
-                        <td v-if="facture.credit>0" class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                            <a :href="route('credits.index')" class="text-red-500 whitespace-no-wrap">Non payer</a>
+                        <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                            <p class="text-gray-900 whitespace-no-wrap">{{ facture.credit }}</p>
                         </td>
 
-                        <td v-else class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                            <p class="text-green-500 whitespace-no-wrap">Payer</p>
+                        <td  v-if="facture.status=='payer'" class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                            <a :href="route('credits.index')" class="text-green-500 whitespace-no-wrap">{{ facture.status }}</a>
                         </td>
                         
+                        <td  v-else="facture.status=='non_payer'" class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                            <a :href="route('credits.index')" class="text-red-500 whitespace-no-wrap">{{ facture.status }}</a>
+                        </td>
+
+                        <td class="border-b border-gray-200 bg-white px-0 py-2 text-xxs flex">
+                            <LinkButton :href="route('factures.edit', { id: facture.id })" :active="route().current('factures.edit')">Modifier</LinkButton>
+                        </td>
+                      
 
                     </tr>
                 </tbody>

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->binary('pdf_data');
             $table->string('credit')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
         });

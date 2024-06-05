@@ -61,8 +61,13 @@ Route::middleware('auth')->group(function () {
     Route::get('factures', [FactureController::class, 'index'])->name('factures.index'); 
     Route::get('factures/facture',[FactureController::class, 'facture'])->name('factures.facture');
     Route::post('factures/facture',[FactureController::class, 'store'])->name('factures.store');
+    Route::get('factures/{id}/edit', [FactureController::class, 'edit'])->name('factures.edit');
+    Route::put('factures/{id}', [FactureController::class, 'update'])->name('factures.update');
+
 
     Route::get('credits',[CreditController::class, 'index'])->name('credits.index');
+    Route::get('credits/{id}/edit',[CreditController::class, 'edit'])->name('credits.edit');
+    Route::put('credits/{id}', [CreditController::class, 'update'])->name('credits.update');
 
 
 

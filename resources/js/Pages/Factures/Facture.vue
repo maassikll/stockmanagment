@@ -21,7 +21,7 @@
   
             <div  class="mb-4">
               <label for="quantity" class="block text-gray-700 text-sm font-bold mb-2">Quantité:</label>
-              <input type="number" id="quantity" v-model="quantity" min="1" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+              <input  type="number" id="quantity" v-model="quantity" step="any" placeholder="Example 1251" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
             </div>
 
             
@@ -42,7 +42,7 @@
                 <hTwoTitle title ="Choisissez une option" class="text-center"/>
                 <div>
                 <InputLabel for="verssment" value="Verrssement"/>
-                <TextInput id="verssment" type="number" class="block w-full " placeholder="Versssement" />
+                <TextInput id="verssment" type="number" step="any" class="block w-full " placeholder="Versssement" />
                 
                 </div>
                 <div class="flex justify-end space-x-2">
@@ -89,7 +89,7 @@
                 <p class="text-gray-900 whitespace-no-wrap">{{ item.product.selling_price }}</p>
               </td>
               <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
-                <p class="text-gray-900 whitespace-no-wrap">{{ item.quantity * item.product.selling_price }}</p>
+                <p class="text-gray-900 whitespace-no-wrap">{{ (item.quantity * item.product.selling_price).toFixed(2) }}</p>
               </td>
               <td class="border-b border-gray-200 bg-white px-2 py-2 text-sm">
                 <RetireButton @click="removeItem(index)" >Retirer</RetireButton>
@@ -122,6 +122,7 @@ import PrintButton from '@/Components/PrintButton.vue'
 import RetireButton from '@/Components/RetireButton.vue'
 import InputLabel from '@/Components/InputLabel.vue';
 const props = defineProps({
+  
   clients: Array,
   products: Array,
   invoice:Object,
@@ -152,6 +153,7 @@ const productItems = computed(() => {
   }));
 });
 
+
 const addProduct = () => {
   const product = props.products.find(p => p.id === selectedProduct.value);
   if (product) {
@@ -173,8 +175,16 @@ const calculateTotalAmount = () => {
   for (const item of invoiceItems.value) { 
     total += item.quantity * item.product.selling_price;
   }
-  return total;
+  return parseFloat(total.toFixed(4));
 };
+
+const calculateMontant = () => {
+  let montant = 0;
+  for (const item of invoiceItems.value){
+    montant = item.quantity * item.product.selling_price;
+  }
+  return parseFloat(montant.toFixed(4));
+}
 
 const loadImage = (src) => {
   return new Promise((resolve, reject) => {
@@ -230,13 +240,12 @@ if($paid){
   paidAmount = 0;
 }
 
-doc.text("Tél 0 44 93 35 99", 90, 10);
+doc.text("Tél 0 44 93 35 99", 85, 10);
 doc.setFontSize(10);
-doc.text("Fourniture: électrique", 10, 15);
+doc.text("Fourniture: électrique", 10, 22);
 doc.setFontSize(15);
-doc.text(`BON N° :`, 10, 22);
 if(selectedClientName){
-  doc.text(`POUR :${selectedClientName}`, 10, 29);
+  doc.text(`POUR :${selectedClientName}`, 10, 27);
 }else{
   doc.text(`POUR :Passager`, 10, 27);
 }
@@ -254,10 +263,12 @@ await doc.autoTable({
   startY:50
 });
 
-doc.setFontSize(14);
-doc.text(`Montant total : ${totalAmount}`, 150, doc.autoTable.previous.finalY + 10);
-doc.text(`Montant payer : ${paidAmount}`, 150, doc.autoTable.previous.finalY + 15);
-doc.text(`Montant restant : ${totalAmount - paidAmount}`, 150, doc.autoTable.previous.finalY + 20);
+
+doc.setFontSize(11);
+doc.text(`Montant total : ${totalAmount}`, 120, doc.autoTable.previous.finalY + 15);
+doc.text(`Montant payer : ${paidAmount}`, 120, doc.autoTable.previous.finalY + 20);
+doc.text(`Montant restant : ${ totalAmount - paidAmount}`, 120, doc.autoTable.previous.finalY + 25);
+doc.setTextColor(0,0,0);
 doc.setFontSize(12);
 doc.text('Merci pour votre visite', 90, doc.autoTable.previous.finalY + 35);
 
@@ -305,15 +316,15 @@ const generatePDF = async ($paid) => {
     paidAmount = 0;
   }
 
-  doc.text("Tél 0 44 93 35 99", 90, 10);
+  doc.text("Tél 0 44 93 35 99", 85, 10);
   doc.setFontSize(10);
-  doc.text("Fourniture: électrique", 10, 15);
+  doc.text("Fourniture: électrique", 10, 22);
   doc.setFontSize(15);
-  doc.text(`BON N° :`, 10, 22);
+  
   if(selectedClientName){
-    doc.text(`POUR :${selectedClientName}`, 10, 29);
+    doc.text(`Bon pour :${selectedClientName}`, 10, 27);
   }else{
-    doc.text(`POUR :Passager`, 10, 27);
+    doc.text(`Bon pour :Passager`, 10, 27);
   }
   
  
@@ -328,15 +339,25 @@ const generatePDF = async ($paid) => {
     ]),
     startY:50
   });
-
-  doc.setFontSize(14);
-  doc.text(`Montant total : ${totalAmount}`, 150, doc.autoTable.previous.finalY + 10);
-  doc.text(`Montant payer : ${paidAmount}`, 150, doc.autoTable.previous.finalY + 15);
-  doc.text(`Montant restant : ${totalAmount - paidAmount}`, 150, doc.autoTable.previous.finalY + 20);
-  doc.setFontSize(12);
-  doc.text('Merci pour votre visite', 90, doc.autoTable.previous.finalY + 35);
   
-  reste = totalAmount - paidAmount;
+
+
+  doc.setFontSize(11);
+  doc.text(`Montant total : ${totalAmount}`, 120, doc.autoTable.previous.finalY + 15);
+  doc.text(`Montant payer : ${paidAmount}`, 120, doc.autoTable.previous.finalY + 20);
+  if (totalAmount - paidAmount<0) {
+    doc.setTextColor(255,0,0);
+    doc.text(`Montant restant : ${totalAmount - paidAmount}`, 120, doc.autoTable.previous.finalY + 25);
+    
+  }else{
+    doc.text(`Montant restant : ${totalAmount - paidAmount}`, 120, doc.autoTable.previous.finalY + 25); 
+  }
+  doc.setTextColor(0,0,0);
+  doc.setFontSize(12);
+  doc.text('Merci pour votre visite', 90, doc.autoTable.previous.finalY + 40);
+  
+
+  let reste = totalAmount - paidAmount;
   const pdfData = await savePDF();
   form.pdf_data = pdfData;
   form.client_id = selectedClient.value || null;
@@ -345,6 +366,8 @@ const generatePDF = async ($paid) => {
   return doc.save(`facture.pdf`);  
   
 };
+
+
 
 
 </script>
